@@ -53,10 +53,10 @@ public class HughesMatrix {
         }
         return toReturn;
     }
-    public static HughesMatrix fromList(List<Double> list){
-        HughesMatrix toReturn = new HughesMatrix(list.size(),1);
-        for(int i = 0; i < list.size(); i++){
-            toReturn.set(i,0,list.get(i));
+    public static HughesMatrix fromArray(double[] array){
+        HughesMatrix toReturn = new HughesMatrix(array.length,1);
+        for(int i = 0; i < array.length; i++){
+            toReturn.set(i,0,array[i]);
         }
         return toReturn;
     }

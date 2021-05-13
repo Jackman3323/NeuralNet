@@ -12,155 +12,170 @@ import java.util.List;
  * Date: 2-24-21
  * -JBH
  */
-public class HughesMatrix {
+
+class HughesMatrix {
     //INSTANCE-DATA
-    private int rows;
-    private int columns;
-    private double[][] data;
+    double [][]data;
+    int rows,cols;
 
-    //CONSTRUCTORS
-    //Simple Constructor
-    public HughesMatrix(int rows, int columns) {
-        this.rows = rows;
-        this.columns = columns;
-        this.data = new double[rows][columns];
-        for (int r = 0; r < this.rows; r++) {
-            for (int c = 0; c < this.columns; c++) {
-                this.data[r][c] = Math.random() * 2 - 1; //Fill data matrix with random doubles between -1 and +1
+    //CONSTRUCTOR (initialize a HughesMatrix of a given size)
+    public HughesMatrix(int rows,int cols) {
+        data= new double[rows][cols];
+        this.rows=rows;
+        this.cols=cols;
+        for(int i=0;i<rows;i++)
+        {
+            for(int j=0;j<cols;j++)
+            {
+                data[i][j]=Math.random()*2-1;
             }
         }
     }
 
-    //HELPER-METHODS (all self explanatory)
-    public double get(int row, int column){
-        return this.data[row][column];
-    }
-    public int getRows(){
-        return this.rows;
-    }
-    public int getColumns(){
-        return this.columns;
-    }
-    public void set(int row, int column, double data){
-        this.data[row][column] = data;
-    }
-    public List<Double> toList(){
-        List<Double> toReturn = new ArrayList<Double>();
-        for(int r = 0; r < this.rows; r++){
-            for(int c = 0; c < this.columns; c++){
-                toReturn.add(this.data[r][c]);
+    //METHODS
+    //print(): print this HughesMatrix to the console
+    public void print()
+    {
+        for(int i=0;i<rows;i++)
+        {
+            for(int j=0;j<cols;j++)
+            {
+                System.out.print(this.data[i][j]+" ");
             }
+            System.out.println();
         }
-        return toReturn;
     }
-    public static HughesMatrix fromArray(double[] array){
-        HughesMatrix toReturn = new HughesMatrix(array.length,1);
-        for(int i = 0; i < array.length; i++){
-            toReturn.set(i,0,array[i]);
-        }
-        return toReturn;
-    }
+    //add(int scalar): add the given scalar to every entry in this hughesMatrix
+    public void add(int scalar)
+    {
+        for(int i=0;i<rows;i++)
+        {
+            for(int j=0;j<cols;j++)
+            {
+                this.data[i][j]+=scalar;
+            }
 
-    //MAIN-METHODS
-    //this version of the add method increases all values in the data matrix by the inputted scalar value.
-    public void add(double scalar){
-        for(int r = 0; r < this.rows; r++){
-            for(int c = 0; c < this.columns; c++){
-                this.data[r][c] += scalar;
-            }
         }
     }
-    //this version of the add method takes a matrix and adds each matching value to this matrix's data
-    public void add(HughesMatrix matrix){
-        if(this.columns != matrix.getColumns() || this.rows != matrix.getRows()){
-            System.out.println("ADDITION ERROR: SIZE INCOMPATIBILITY");
+    //add(HughesMatrix m): add the given HughesMatrix to this one.
+    public void add(HughesMatrix m)
+    {
+        if(cols!=m.cols || rows!=m.rows) {
+            System.out.println("Shape Mismatch");
             return;
         }
-        for(int r = 0; r < this.rows; r++){
-            for(int c = 0; c < this.columns; c++){
-                this.data[r][c] = this.data[r][c] + matrix.get(r,c);
+
+        for(int i=0;i<rows;i++)
+        {
+            for(int j=0;j<cols;j++)
+            {
+                this.data[i][j]+=m.data[i][j];
             }
         }
     }
-    //this returns an exact copy of the inputted HughesMatrix
-    public static HughesMatrix clone(HughesMatrix matrix){
-        HughesMatrix toReturn = new HughesMatrix(matrix.getRows(),matrix.getColumns());
-        for(int r = 0; r < matrix.getRows(); r++){
-            for(int c = 0; c < matrix.getColumns(); c++){
-                toReturn.set(r,c,matrix.get(r,c));
+    //fromArray(double[]x): create and return a HughesMatrix from a double array
+    public static HughesMatrix fromArray(double[]x)
+    {
+        HughesMatrix temp = new HughesMatrix(x.length,1);
+        for(int i =0;i<x.length;i++)
+            temp.data[i][0]=x[i];
+        return temp;
+
+    }
+    //toList(): create and return a list made from this HughesMatrix
+    public List<Double> toList() {
+        List<Double> temp= new ArrayList<Double>()  ;
+
+        for(int i=0;i<rows;i++)
+        {
+            for(int j=0;j<cols;j++)
+            {
+                temp.add(data[i][j]);
             }
         }
-        return toReturn;
+        return temp;
     }
-    //This returns a new matrix assembled by the element-based subtraction of a - b
-    public static HughesMatrix subtract(HughesMatrix a, HughesMatrix b){
-        if(a.getColumns() != b.getColumns() || a.getRows() != b.getRows()){
-            System.out.println("SUBTRACTION ERROR: SIZE INCOMPATIBILITY");
-            return null;
-        }
-        HughesMatrix toReturn = new HughesMatrix(a.getRows(),a.getColumns());
-        for(int r = 0; r < a.getRows(); r++){
-            for(int c = 0; c < a.getColumns(); c++){
-                toReturn.set(r,c,(a.get(r,c)-b.get(r,c)));
+    //subtract(HM a, HM b): subtract two HughesMatrix objects-- "a-b" -- returning the resultant HughesMatrix
+    public static HughesMatrix subtract(HughesMatrix a, HughesMatrix b) {
+        HughesMatrix temp=new HughesMatrix(a.rows,a.cols);
+        for(int i=0;i<a.rows;i++)
+        {
+            for(int j=0;j<a.cols;j++)
+            {
+                temp.data[i][j]=a.data[i][j]-b.data[i][j];
             }
         }
-        return toReturn;
+        return temp;
     }
-    //This version of the multiply method multiplies matrix a by matrix b and returns the resulting HughesMatrix
-    public static HughesMatrix multiply(HughesMatrix a, HughesMatrix b){
-        HughesMatrix toReturn = new HughesMatrix(a.getRows(), b.getColumns());
-        for(int r = 0; r < a.getRows(); r++){
-            for(int c = 0; c < b.getColumns(); c++){
-                double curSum = 0;
-                for(int z = 0; z < a.getColumns(); z++){
-                    //Matrix multiplication sucks lol it's row times column equals one entry and I hate it a lot
-                    curSum += a.get(r,z) * b.get(z,c);
+    //clone(HM a): return a clone of the given HughesMatrix
+    public static HughesMatrix clone(HughesMatrix a) {
+        HughesMatrix temp=new HughesMatrix(a.cols,a.rows);
+        for(int i=0;i<a.rows;i++)
+        {
+            for(int j=0;j<a.cols;j++)
+            {
+                temp.data[j][i]=a.data[i][j];
+            }
+        }
+        return temp;
+    }
+    //multiply(HM a, HM b): return a HM resulting from the multiplication of "a * b"
+    public static HughesMatrix multiply(HughesMatrix a, HughesMatrix b) {
+        HughesMatrix temp=new HughesMatrix(a.rows,b.cols);
+        for(int i=0;i<temp.rows;i++)
+        {
+            for(int j=0;j<temp.cols;j++)
+            {
+                double sum=0;
+                for(int k=0;k<a.cols;k++)
+                {
+                    sum+=a.data[i][k]*b.data[k][j];
                 }
-                toReturn.set(r,c,curSum);
+                temp.data[i][j]=sum;
             }
         }
-        return toReturn;
+        return temp;
     }
-    //this version of the multiply method multiplies every value in this HughesMatrix by an inputted scalar
-    public void multiply(double scalar){
-        for(int r = 0; r < this.rows; r++){
-            for(int c = 0; c < this.columns; c++){
-                this.data[r][c] = this.data[r][c] * scalar;
+    //multiply(HM a): multiply this HM by a
+    public void multiply(HughesMatrix a) {
+        for(int i=0;i<a.rows;i++)
+        {
+            for(int j=0;j<a.cols;j++)
+            {
+                this.data[i][j]*=a.data[i][j];
             }
         }
+
     }
-    //this version of the multiply method does ELEMENT-WISE multiplication of this HughesMatrix by the inputted HughesMatrix
-    public void multiply(HughesMatrix matrix){
-        if(this.columns != matrix.getColumns() || this.rows != matrix.getRows()){
-            System.out.println("ELEMENT MULTIPLICATION ERROR: SIZE INCOMPATIBILITY");
-            return;
-        }
-        for(int r = 0; r < this.rows; r++){
-            for(int c = 0; c < this.columns; c++){
-                //Element multiplication
-                this.data[r][c] = this.data[r][c] * matrix.get(r,c);
+    //multiply(double a): multiply this HM's values by a
+    public void multiply(double a) {
+        for(int i=0;i<rows;i++)
+        {
+            for(int j=0;j<cols;j++)
+            {
+                this.data[i][j]*=a;
             }
         }
+
     }
-    //this is the sigmoid function--it implements the sigmoid curve as an initialization step for learning gradients
-    public void initSigmoid(){
-        for(int r = 0; r < this.rows; r++){
-            for(int c = 0; c < this.columns; c++){
-                //The internet says this is the sigmoid curve...
-                this.data[r][c] = 1/(1+Math.exp(-this.data[r][c]));
-            }
+    //initSigmoid(): apply the sigmoid function to this HM
+    public void initSigmoid() {
+        for(int i=0;i<rows;i++)
+        {
+            for(int j=0;j<cols;j++)
+                this.data[i][j] = 1/(1+Math.exp(-this.data[i][j]));
         }
+
     }
-    //this is the derivative of sigmoid function--it returns a HughesMatrix after applying the derivative of sigmoid
-    //to this HughesMatrix
-    public HughesMatrix deriveSigmoid(){
-        HughesMatrix toReturn = new HughesMatrix(this.rows,this.columns);
-        for(int r = 0; r < this.rows; r++){
-            for(int c = 0; c < this.columns; c++){
-                double derivedSigmoid = this.data[r][c] * (1-this.data[r][c]);
-                toReturn.set(r,c,derivedSigmoid);
-            }
+    //deriveSigmoid(): remove the sigmoid function from this HM
+    public HughesMatrix deriveSigmoid() {
+        HughesMatrix temp=new HughesMatrix(rows,cols);
+        for(int i=0;i<rows;i++)
+        {
+            for(int j=0;j<cols;j++)
+                temp.data[i][j] = this.data[i][j] * (1-this.data[i][j]);
         }
-        return toReturn;
+        return temp;
+
     }
 }

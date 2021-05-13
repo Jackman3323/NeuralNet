@@ -2,6 +2,7 @@ import java.util.List;
 
 public class Network {
     //INSTANCE-DATA
+
     private HughesMatrix ihWeights; //Input and hidden layer weights
     private HughesMatrix hoWeights; //Output and hidden layer weights
     private HughesMatrix hiddenBias; //Hidden layer bias
@@ -74,7 +75,31 @@ public class Network {
 
     public void fit(double[][]x, double[][]y, int epochs){
         for(int i = 0; i < epochs; i++){
-            
+            int sampleNum = (int)(Math.random() * x.length);
+            this.train(x[sampleNum],y[sampleNum]);
+        }
+    }
+
+    public static void main(String[] args) {
+        double [][] X= {
+                {0,0},
+                {1,0},
+                {0,1},
+                {1,1}
+        };
+        double [][] Y= {
+                {0},{1},{1},{0}
+        };
+        Network nn = new Network(2,10,1);
+        List<Double>output;
+        nn.fit(X, Y, 50000);
+        double [][] input = {
+                {0,0},{0,1},{1,0},{1,1}
+        };
+        for(double[] d :input)
+        {
+            output = nn.predict(d);
+            System.out.println(output.toString());
         }
     }
 }
